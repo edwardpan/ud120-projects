@@ -12,14 +12,28 @@ import sys
 from time import time
 sys.path.append("../tools/")
 from email_preprocess import preprocess
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+import numpy as np
 
 
 ### features_train and features_test are the features for the training
 ### and testing datasets, respectively
 ### labels_train and labels_test are the corresponding item labels
 features_train, features_test, labels_train, labels_test = preprocess()
-
-
+# features_train = features_train[:len(features_train)/100]
+# labels_train = labels_train[:len(labels_train)/100]
+clf = SVC(kernel="rbf", C=10000.0)
+t0 = time()
+clf.fit(features_train, labels_train)
+print "training time:", round(time()-t0, 3), "s"
+t0 = time()
+predict_res = clf.predict(features_test)
+print "predicting time:", round(time()-t0, 3), "s"
+print "element 10:", predict_res[10], ", element 26:", predict_res[26], ", element 50:", predict_res[50]
+print "Chris number: ", np.sum(predict_res == 1)
+score = accuracy_score(labels_test, predict_res)
+print "svm score is:", score
 
 
 #########################################################
